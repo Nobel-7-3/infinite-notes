@@ -15,6 +15,8 @@ quizzes and mind maps living on the same page as your handwriting.
 
 [**Download**](#download) · [Watch](#see-it-in-30-seconds) · [What it does](#what-it-does) · [Privacy](#privacy) · [Install guides](#install-guides) · [Report a bug](https://github.com/Nobel-7-3/infinite-notes/issues/new/choose)
 
+<sub>⭐ Enjoying it? Give this repo a star — it's how other students find it.</sub>
+
 <br>
 
 <img src="site/assets/og-image.jpg" width="760" alt="Infinite Notes — an infinite canvas for your notes">

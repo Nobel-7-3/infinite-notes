@@ -19,10 +19,15 @@
 <link rel="canonical" href="https://nobel-7-3.github.io/infinite-notes/">
 <link rel="icon" type="image/png" href="assets/favicon-64.png">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+  /* Fonts are served from this site, so no font service sees who visits. Licences: assets/fonts/OFL-*.txt */
+  @font-face { font-family: "Inter"; font-style: normal; font-weight: 400 600; font-display: swap; src: url("assets/fonts/inter.woff2") format("woff2"); }
+  @font-face { font-family: "Instrument Serif"; font-style: normal; font-weight: 400; font-display: swap; src: url("assets/fonts/instrument-serif.woff2") format("woff2"); }
+  @font-face { font-family: "Instrument Serif"; font-style: italic; font-weight: 400; font-display: swap; src: url("assets/fonts/instrument-serif-italic.woff2") format("woff2"); }
+  @font-face { font-family: "Caveat"; font-style: normal; font-weight: 500 600; font-display: swap; src: url("assets/fonts/caveat.woff2") format("woff2"); }
+
   :root {
     --ink-0: #07080c;
     --ink-1: #0d0f15;
@@ -308,6 +313,9 @@
   .prompt::after { content: ""; position: absolute; left: 0; right: 0; top: 46px; border-top: 1px solid var(--hair); }
   .prompt .copy { position: absolute; top: 10px; right: 10px; }
   .agents { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .star { display: flex; align-items: center; justify-content: center; gap: 12px 20px; flex-wrap: wrap; margin-top: 44px; text-align: center; }
+  .star p { margin: 0; color: var(--muted); font-size: 15px; }
+  .star svg { color: var(--gold-hi); }
 
   .founder { padding: 10px 0 120px; }
   .founder .box { display: grid; grid-template-columns: auto 1fr; gap: 36px; align-items: start; max-width: 860px; margin-inline: auto; padding: 44px; border-radius: 26px; border: 1px solid var(--hair); background: var(--ink-1); }
@@ -678,6 +686,14 @@
           </div>
           <div class="prompt" id="prompt">Read https://github.com/Nobel-7-3/infinite-notes/blob/main/AGENTS.md and install Infinite Notes for Windows on this computer for me. Tell me what you will download before you download it, check it against the published SHA-256 checksum, then install it and open the app.<button class="btn btn-ghost btn-sm copy" type="button" data-copy="prompt">Copy</button></div>
         </article>
+      </div>
+
+      <div class="star reveal">
+        <p>Enjoying it? A star on GitHub helps other students find it.</p>
+        <a class="btn btn-ghost" href="https://github.com/Nobel-7-3/infinite-notes">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.3L12 17.1l-5.7 3.1 1.2-6.3-4.7-4.4 6.4-.8z"/></svg>
+          Star on GitHub
+        </a>
       </div>
     </div>
   </section>
