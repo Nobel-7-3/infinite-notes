@@ -160,6 +160,16 @@ handwriting or your notes. Full details: [PRIVACY.md](PRIVACY.md).
 Infinite Notes is an independent project, built by a student for studying.
 The apps are free to download and use. The source code is not public.
 
+**Built with**
+
+![Android app: Kotlin and Jetpack Compose](https://img.shields.io/badge/Android_app-Kotlin_%C2%B7_Jetpack_Compose-7f52ff?style=flat-square)
+![Windows app: JavaScript, Node.js and Electron](https://img.shields.io/badge/Windows_app-JavaScript_%C2%B7_Node.js_%C2%B7_Electron-47848f?style=flat-square)
+![Handwriting recognition: ML Kit, on-device](https://img.shields.io/badge/Handwriting-ML_Kit%2C_on--device-1f7a73?style=flat-square)
+
+GitHub's language bar for this repository counts only what is in it — the
+website's HTML, CSS and JavaScript. The apps' own code lives in private
+repositories.
+
 ## Legal
 
 - [LICENSE](LICENSE) — the terms for using the apps.
