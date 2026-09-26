@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Infinite Notes</title>
+<meta name="description" content="A notebook with no edges. Handwrite on an infinite canvas with your lecture PDFs, videos, flashcards, quizzes and mind maps on the same page. Offline, private, no account.">
+<meta name="theme-color" content="#07080c">
+<meta property="og:title" content="Infinite Notes — a notebook with no edges">
+<meta property="og:description" content="Handwrite on an infinite canvas with your lecture slides, videos, quizzes and mind maps on the same page.">
+<meta property="og:image" content="assets/og-image.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/png" href="assets/favicon-64.png">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink-0: #07080c;
+    --ink-1: #0d0f15;
+    --ink-2: #14161e;
+    --ink-3: #1c1f29;
+    --hair: rgba(233, 215, 170, 0.10);
+    --hair-strong: rgba(233, 215, 170, 0.22);
+    --text: #f1ede3;
+    --muted: #a39e92;
+    --faint: #6f6b62;
+    --gold: #d4a24c;
+    --gold-hi: #f0c979;
+    --teal: #1f8a80;
+    --coral: #e35d5b;
+    --paper: #f6f5ef;
+    --bar: #3b3d45;
+    --radius: 18px;
+    --serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --hand: "Caveat", "Segoe Print", cursive;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--ink-0);
+    color: var(--text);
+    font: 400 16px/1.6 var(--sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; }
+  img { max-width: 100%; display: block; }
+  .wrap { width: min(1160px, 100% - 32px); margin-inline: auto; }
+  .dots {
+    background-image: radial-gradient(rgba(241, 237, 227, 0.09) 1px, transparent 1.2px);
+    background-size: 22px 22px;
+  }
+  :focus-visible { outline: 2px solid var(--gold-hi); outline-offset: 3px; border-radius: 6px; }
+
+  /* ---------- nav ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    background: rgba(7, 8, 12, 0.72);
+    border-bottom: 1px solid var(--hair);
+  }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 600; letter-spacing: -0.01em; }
+  .brand img { width: 28px; height: 28px; border-radius: 7px; }
+  .nav-links { display: flex; gap: 28px; font-size: 14px; color: var(--muted); }
+  .nav-links a { text-decoration: none; transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 18px; border-radius: 999px;
+    font: 600 14px/1 var(--sans); text-decoration: none; letter-spacing: -0.005em;
+    border: 1px solid transparent; transition: transform .15s, background .2s, border-color .2s, box-shadow .2s;
+    cursor: pointer; white-space: nowrap;
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn-gold { background: linear-gradient(180deg, var(--gold-hi), var(--gold)); color: #1a1408; box-shadow: 0 8px 30px -10px rgba(212, 162, 76, .6), inset 0 1px 0 rgba(255,255,255,.35); }
+  .btn-gold:hover { box-shadow: 0 10px 40px -8px rgba(212, 162, 76, .75), inset 0 1px 0 rgba(255,255,255,.35); }
+  .btn-ghost { border-color: var(--hair-strong); color: var(--text); background: rgba(255,255,255,.02); }
+  .btn-ghost:hover { border-color: rgba(240, 201, 121, .5); background: rgba(240, 201, 121, .06); }
+  .btn-sm { padding: 9px 14px; font-size: 13px; }
+
+  /* ---------- hero ---------- */
+  .hero { position: relative; padding: 88px 0 40px; overflow: hidden; }
+  .hero::before {
+    content: ""; position: absolute; inset: -20% -10% auto; height: 720px; pointer-events: none;
+    background: radial-gradient(ellipse 50% 60% at 50% 20%, rgba(212, 162, 76, .16), transparent 70%);
+  }
+  .hero-copy { position: relative; text-align: center; max-width: 820px; margin-inline: auto; }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px 6px 8px; border-radius: 999px;
+    border: 1px solid var(--hair-strong); background: rgba(255,255,255,.025);
+    font-size: 13px; color: var(--muted);
+  }
+  .eyebrow b { font-weight: 600; color: #1a1408; background: var(--gold); border-radius: 999px; padding: 2px 9px; font-size: 11.5px; letter-spacing: .02em; }
+  h1 {
+    font: 400 clamp(52px, 9vw, 112px)/0.95 var(--serif);
+    letter-spacing: -0.025em; margin: 26px 0 22px;
+  }
+  h1 em { font-style: italic; color: var(--gold-hi); }
+  .lede { font-size: clamp(17px, 2.1vw, 20px); color: var(--muted); max-width: 640px; margin: 0 auto 34px; }
+  .lede strong { color: var(--text); font-weight: 500; }
+  .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .fineprint { margin-top: 18px; font-size: 13px; color: var(--faint); display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
+  .fineprint span::before { content: "✦"; color: var(--gold); margin-right: 7px; font-size: 10px; vertical-align: 1px; }
+
+  /* ---------- the canvas demo ---------- */
+  .stage { position: relative; margin: 64px auto 0; max-width: 1080px; perspective: 1800px; }
+  .device {
+    position: relative; border-radius: 28px; padding: 14px;
+    background: linear-gradient(160deg, #23252e, #0c0d12 55%);
+    border: 1px solid var(--hair-strong);
+    box-shadow: 0 60px 120px -40px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.6), 0 30px 80px -50px rgba(212,162,76,.35);
+    transform: rotateX(8deg); transform-origin: 50% 100%;
+    transition: transform .8s cubic-bezier(.2,.7,.2,1);
+  }
+  .stage:hover .device { transform: rotateX(2deg); }
+  .screen { position: relative; aspect-ratio: 16 / 10; border-radius: 16px; overflow: hidden; background: var(--ink-1); }
+  .toolbar {
+    position: absolute; z-index: 5; top: 14px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 10px; padding: 8px 14px;
+    background: rgba(20, 22, 30, .92); border: 1px solid var(--hair); border-radius: 14px;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,.8);
+  }
+  .tool { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; }
+  .tool svg { width: 16px; height: 16px; }
+  .tool.on { background: rgba(212,162,76,.18); }
+  .swatch { width: 14px; height: 14px; border-radius: 50%; }
+  .tsep { width: 1px; height: 18px; background: var(--hair-strong); }
+  .note-title { position: absolute; z-index: 5; top: 20px; left: 22px; font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 10px; color: var(--text); }
+  .note-title svg { width: 14px; height: 14px; opacity: .8; }
+  .minimap {
+    position: absolute; z-index: 5; right: 16px; bottom: 16px; width: 112px; height: 70px;
+    border-radius: 10px; background: rgba(20,22,30,.9); border: 1px solid var(--hair);
+  }
+  .minimap i { position: absolute; border-radius: 2px; background: rgba(241,237,227,.28); }
+  .minimap .view { position: absolute; border: 1.5px solid var(--gold); border-radius: 3px; left: 26%; top: 22%; width: 42%; height: 48%; animation: mini 22s ease-in-out infinite; }
+  @keyframes mini { 50% { transform: translate(10px, 5px); } }
+
+  .world { position: absolute; inset: -40px -80px -120px; animation: pan 22s ease-in-out infinite; will-change: transform; }
+  @keyframes pan { 50% { transform: translate(-46px, -22px); } }
+  .obj { position: absolute; }
+
+  .page {
+    background: var(--paper); border-radius: 6px; padding: 12px 12px 10px;
+    box-shadow: 0 18px 40px -18px rgba(0,0,0,.8);
+  }
+  .page .h { height: 8px; width: 55%; background: var(--teal); border-radius: 4px; margin-bottom: 9px; }
+  .page .l { height: 4px; background: var(--bar); border-radius: 2px; margin: 5px 0; opacity: .85; }
+  .page .l.t { background: var(--teal); }
+  .page .l.c { background: var(--coral); }
+  .hl { position: absolute; height: 9px; background: rgba(240, 201, 121, .55); border-radius: 3px; mix-blend-mode: multiply; }
+
+  .video { width: 300px; border-radius: 12px; overflow: hidden; background: #0e1118; border: 1px solid var(--hair-strong); box-shadow: 0 24px 50px -20px rgba(0,0,0,.9); }
+  .video .thumb { position: relative; aspect-ratio: 16/9; background:
+      radial-gradient(circle at 30% 40%, rgba(31,138,128,.55), transparent 55%),
+      radial-gradient(circle at 75% 65%, rgba(212,162,76,.35), transparent 50%),
+      linear-gradient(135deg, #10202a, #151823); }
+  .video .play { position: absolute; inset: 0; margin: auto; width: 46px; height: 46px; border-radius: 50%; background: rgba(241,237,227,.92); display: grid; place-items: center; }
+  .video .play::after { content: ""; margin-left: 4px; border-left: 13px solid #10131a; border-top: 8px solid transparent; border-bottom: 8px solid transparent; }
+  .video .meta { padding: 9px 12px 11px; font-size: 11.5px; color: var(--muted); }
+  .video .meta b { display: block; color: var(--text); font-weight: 500; font-size: 12.5px; margin-bottom: 7px; }
+  .video .bar { height: 3px; border-radius: 2px; background: rgba(241,237,227,.12); overflow: hidden; }
+  .video .bar i { display: block; height: 100%; width: 38%; background: var(--gold); animation: prog 22s linear infinite; }
+  @keyframes prog { from { width: 18%; } to { width: 78%; } }
+
+  .flash { width: 210px; height: 128px; perspective: 800px; cursor: pointer; }
+  .flash-inner { position: relative; width: 100%; height: 100%; transition: transform .7s cubic-bezier(.3,.7,.2,1); transform-style: preserve-3d; }
+  .flash:hover .flash-inner, .flash:focus-within .flash-inner { transform: rotateY(180deg); }
+  .face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border-radius: 12px; padding: 14px 15px; display: flex; flex-direction: column; justify-content: space-between;
+    border: 1px solid var(--hair-strong); box-shadow: 0 20px 40px -18px rgba(0,0,0,.85);
+  }
+  .face.front { background: var(--ink-3); }
+  .face.back { background: linear-gradient(160deg, #1d3b38, #142624); transform: rotateY(180deg); }
+  .face small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+  .face p { margin: 0; font-size: 13.5px; line-height: 1.35; color: var(--text); font-weight: 500; }
+  .face .hint { font-size: 10.5px; color: var(--faint); }
+
+  .quiz { width: 230px; padding: 13px 14px; border-radius: 12px; background: var(--ink-3); border: 1px solid var(--hair-strong); font-size: 12px; box-shadow: 0 20px 40px -18px rgba(0,0,0,.85); }
+  .quiz small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+  .quiz p { margin: 6px 0 9px; font-size: 12.5px; font-weight: 500; line-height: 1.35; }
+  .opt { padding: 6px 9px; border-radius: 7px; border: 1px solid var(--hair); margin-top: 5px; color: var(--muted); display: flex; justify-content: space-between; }
+  .opt.ok { border-color: rgba(31,138,128,.8); background: rgba(31,138,128,.18); color: var(--text); }
+
+  .mind { width: 260px; }
+  .audio { display: flex; align-items: center; gap: 12px; padding: 10px 16px 10px 10px; border-radius: 999px; background: var(--ink-3); border: 1px solid var(--hair-strong); box-shadow: 0 20px 40px -18px rgba(0,0,0,.85); }
+  .aplay { width: 30px; height: 30px; border-radius: 50%; background: var(--gold); display: grid; place-items: center; flex: none; }
+  .aplay::after { content: ""; margin-left: 3px; border-left: 9px solid #1a1408; border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+  .wave { display: flex; align-items: center; gap: 3px; height: 24px; }
+  .wave i { width: 3px; border-radius: 2px; background: rgba(240,201,121,.75); animation: wave 1.4s ease-in-out infinite; transform-origin: center; }
+  .wave i:nth-child(3n) { animation-delay: .2s; } .wave i:nth-child(3n+1) { animation-delay: .45s; }
+  @keyframes wave { 50% { transform: scaleY(.45); } }
+  .atext { font-size: 11px; color: var(--muted); line-height: 1.3; }
+  .atext b { display: block; color: var(--text); font-weight: 500; font-size: 12px; }
+  .mind text { font: 500 10.5px var(--sans); fill: var(--text); }
+
+  .ink path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 2.2s cubic-bezier(.5,.1,.3,1) forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .hand { font: 600 26px/1 var(--hand); color: var(--gold-hi); white-space: nowrap; overflow: hidden; width: 0; animation: write 2.6s steps(22, end) forwards; }
+  @keyframes write { to { width: 11.5em; } }
+
+  /* ---------- sections ---------- */
+  section { position: relative; }
+  .section { padding: 120px 0; }
+  .kicker { font-size: 12.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
+  h2 { font: 400 clamp(38px, 5.4vw, 64px)/1.02 var(--serif); letter-spacing: -0.02em; margin: 14px 0 18px; }
+  h2 em { font-style: italic; color: var(--gold-hi); }
+  .sub { color: var(--muted); font-size: 18px; max-width: 620px; margin: 0; }
+  .center { text-align: center; }
+  .center .sub { margin-inline: auto; }
+
+  .strip { border-block: 1px solid var(--hair); padding: 22px 0; }
+  .strip .wrap { display: flex; align-items: center; justify-content: center; gap: 12px 34px; flex-wrap: wrap; color: var(--faint); font-size: 14px; }
+  .strip b { color: var(--muted); font-weight: 500; }
+
+  .bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-top: 56px; }
+  .tile {
+    position: relative; overflow: hidden; border-radius: var(--radius); padding: 28px;
+    background: linear-gradient(180deg, var(--ink-2), var(--ink-1));
+    border: 1px solid var(--hair); transition: border-color .3s, transform .3s;
+    grid-column: span 2; min-height: 250px; display: flex; flex-direction: column;
+  }
+  .tile:hover { border-color: var(--hair-strong); transform: translateY(-2px); }
+  .tile.wide { grid-column: span 3; }
+  .tile.full { grid-column: span 4; }
+  .tile.all { grid-column: 1 / -1; min-height: 0; }
+  .tile h3 { font: 400 28px/1.1 var(--serif); margin: 0 0 10px; letter-spacing: -0.01em; }
+  .tile p { color: var(--muted); margin: 0; font-size: 15px; }
+  .tile .art { margin-top: auto; padding-top: 26px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-size: 12.5px; padding: 6px 11px; border-radius: 999px; border: 1px solid var(--hair-strong); color: var(--text); background: rgba(255,255,255,.025); }
+  .chip.g { border-color: rgba(212,162,76,.45); color: var(--gold-hi); }
+  .pens { display: flex; gap: 14px; align-items: flex-end; }
+  .pens div { width: 16px; border-radius: 8px 8px 3px 3px; background: linear-gradient(180deg, var(--ink-3), #2a2d38); border: 1px solid var(--hair-strong); position: relative; }
+  .pens div::before { content: ""; position: absolute; left: 50%; top: -9px; transform: translateX(-50%); border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 9px solid var(--c, var(--gold)); }
+  .convert { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .convert .from { font: 600 30px/1 var(--hand); color: var(--gold-hi); }
+  .convert .arrow { color: var(--faint); }
+  .convert .to { font: 500 18px var(--sans); padding: 6px 12px; border-radius: 8px; background: var(--ink-3); border: 1px solid var(--hair); }
+  .lockart { display: flex; align-items: center; gap: 16px; }
+  .lockart svg { width: 44px; height: 44px; }
+  .lockart ul { margin: 0; padding: 0; list-style: none; font-size: 14px; color: var(--muted); }
+  .lockart li::before { content: "✓"; color: var(--teal); margin-right: 8px; font-weight: 700; }
+
+  .gallery { display: grid; grid-auto-flow: column; grid-auto-columns: min(78%, 720px); gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 56px max(16px, calc((100% - 1160px) / 2)) 12px; scroll-padding-inline: max(16px, calc((100% - 1160px) / 2)); scrollbar-width: thin; scrollbar-color: var(--ink-3) transparent; }
+  .gallery figure { margin: 0; scroll-snap-align: start; }
+  .gallery img { border-radius: 14px; border: 1px solid var(--hair); box-shadow: 0 30px 60px -30px rgba(0,0,0,.9); aspect-ratio: 16/10; object-fit: cover; width: 100%; height: auto; }
+  .gallery figcaption { margin-top: 12px; font-size: 14px; color: var(--muted); }
+
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; gap: 18px; margin-top: 60px; }
+  .flow .wire { align-self: center; }
+  .node { text-align: center; padding: 30px 20px; border-radius: var(--radius); border: 1px solid var(--hair); background: var(--ink-1); }
+  .node svg { width: 56px; height: 56px; margin: 0 auto 14px; }
+  .node b { display: block; font-weight: 600; margin-bottom: 4px; }
+  .node span { color: var(--muted); font-size: 14px; }
+  .wire { width: 90px; height: 2px; background: repeating-linear-gradient(90deg, var(--gold) 0 8px, transparent 8px 14px); background-size: 28px 2px; animation: flow 1.2s linear infinite; opacity: .8; }
+  @keyframes flow { to { background-position: 28px 0; } }
+
+  .privacy { text-align: center; padding: 140px 0 40px; }
+  .privacy h2 { font-size: clamp(40px, 6.4vw, 84px); max-width: 980px; margin-inline: auto; }
+  .pgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 56px; text-align: left; }
+  .pgrid div { padding: 24px; border-radius: var(--radius); border: 1px solid var(--hair); background: var(--ink-1); }
+  .pgrid b { display: block; font-size: 17px; margin-bottom: 6px; font-weight: 600; }
+  .pgrid span { color: var(--muted); font-size: 15px; }
+
+  .dl { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 56px; }
+  .card { padding: 32px; border-radius: 22px; border: 1px solid var(--hair-strong); background: radial-gradient(ellipse at top left, rgba(212,162,76,.10), transparent 60%), var(--ink-1); }
+  .card h3 { font: 400 34px/1.05 var(--serif); margin: 14px 0 8px; }
+  .card p { color: var(--muted); margin: 0 0 24px; }
+  .card .os { display: inline-flex; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); }
+  .card .os svg { width: 18px; height: 18px; }
+  .card ol { color: var(--muted); font-size: 14px; padding-left: 18px; margin: 20px 0 0; }
+  .card ol li { margin: 4px 0; }
+  .ai { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1.4fr; gap: 28px; align-items: center; }
+  .prompt { position: relative; font: 400 14px/1.65 ui-monospace, "Cascadia Code", Menlo, monospace; color: #e8e2d2; background: #0a0b10; border: 1px solid var(--hair); border-radius: 14px; padding: 58px 20px 20px; }
+  .prompt::before { content: "Prompt"; position: absolute; top: 18px; left: 20px; font: 600 11px var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+  .prompt::after { content: ""; position: absolute; left: 0; right: 0; top: 46px; border-top: 1px solid var(--hair); }
+  .prompt .copy { position: absolute; top: 10px; right: 10px; }
+  .agents { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+
+  .founder { padding: 10px 0 120px; }
+  .founder .box { display: grid; grid-template-columns: auto 1fr; gap: 36px; align-items: start; max-width: 860px; margin-inline: auto; padding: 44px; border-radius: 26px; border: 1px solid var(--hair); background: var(--ink-1); }
+  .founder .mark { font: 400 120px/0.7 var(--serif); color: var(--gold); }
+  .founder blockquote { margin: 0; font: 400 clamp(22px, 2.7vw, 30px)/1.3 var(--serif); letter-spacing: -0.005em; }
+  .founder cite { display: block; margin-top: 20px; font: 500 15px var(--sans); color: var(--muted); font-style: normal; }
+  .founder cite b { color: var(--text); font-weight: 600; }
+
+  footer { border-top: 1px solid var(--hair); padding: 40px 0 56px; color: var(--faint); font-size: 14px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; align-items: center; }
+  footer nav { display: flex; gap: 22px; flex-wrap: wrap; }
+  footer a { text-decoration: none; color: var(--muted); }
+  footer a:hover { color: var(--text); }
+  footer .tm { flex-basis: 100%; margin: 8px 0 0; font-size: 12px; line-height: 1.6; color: var(--faint); max-width: 900px; }
+  .pgrid a { color: var(--gold-hi); text-decoration: none; border-bottom: 1px solid rgba(240,201,121,.35); }
+  .pgrid a:hover { border-bottom-color: var(--gold-hi); }
+
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (max-width: 960px) {
+    .nav-links { display: none; }
+    .bento { grid-template-columns: 1fr 1fr; }
+    .tile, .tile.wide, .tile.full, .tile.all { grid-column: span 2; min-height: 0; }
+    .flow { grid-template-columns: 1fr; }
+    .wire { width: 2px; height: 36px; margin: 0 auto; background: repeating-linear-gradient(180deg, var(--gold) 0 8px, transparent 8px 14px); background-size: 2px 28px; animation-name: flowv; }
+    @keyframes flowv { to { background-position: 0 28px; } }
+    .pgrid, .dl, .ai { grid-template-columns: 1fr; }
+    .founder .box { grid-template-columns: 1fr; padding: 30px; gap: 12px; }
+    .founder .mark { font-size: 80px; }
+  }
+  @media (max-width: 640px) {
+    .hero { padding-top: 56px; }
+    .device { padding: 8px; border-radius: 18px; transform: none; }
+    .screen { aspect-ratio: 4 / 5; }
+    .toolbar { gap: 6px; padding: 6px 10px; top: 52px; }
+    .toolbar .opt-sm { display: none; }
+    .hide-sm { display: none; }
+    /* The phone gets its own arrangement of the canvas: the video with ink over it, the note, the audio strip. */
+    .o-pdf1, .o-quiz, .minimap { display: none; }
+    .o-video { left: 132px !important; top: 162px !important; width: 220px; }
+    .o-ink { left: 114px !important; top: 140px !important; transform: scale(.733); transform-origin: 0 0; }
+    .o-hand { left: 154px !important; top: 339px !important; font-size: 19px; }
+    .o-audio { left: 132px !important; top: 394px !important; }
+    .o-pdf2 { left: 372px !important; top: 172px !important; }
+    .section { padding: 84px 0; }
+    .tile { padding: 22px; }
+    .card { padding: 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    .draw { stroke-dashoffset: 0; }
+    .hand { width: 11.5em; }
+    .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="assets/icon-192.png" alt="">Infinite Notes</a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#features">Features</a>
+      <a href="#desktop">Desktop</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#story">Story</a>
+    </nav>
+    <a class="btn btn-gold btn-sm" href="#download">Download</a>
+  </div>
+</header>
+
+<main id="top">
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-copy">
+        <span class="eyebrow"><b>BETA</b> Free for Android tablets<span class="hide-sm">&nbsp;· with a Windows companion</span></span>
+        <h1>A notebook<br>with no <em>edges.</em></h1>
+        <p class="lede">Write with a pen on a page that never runs out — with your
+          <strong>lecture slides, videos, quizzes and mind maps</strong> living on the same page as your handwriting.</p>
+        <div class="cta-row">
+          <a class="btn btn-gold" href="#download">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+            Download for Android
+          </a>
+          <a class="btn btn-ghost" href="#desktop">See the desktop app →</a>
+        </div>
+        <div class="fineprint"><span>Free</span><span>Works offline</span><span>No account, no ads</span></div>
+      </div>
+
+      <!-- The canvas demo -->
+      <div class="stage" aria-label="Illustration of an Infinite Notes page with PDFs, a video, a flashcard, a quiz and a mind map">
+        <div class="device">
+          <div class="screen">
+            <div class="note-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg>Shoulder complex</div>
+            <div class="toolbar" aria-hidden="true">
+              <div class="tool on"><svg viewBox="0 0 24 24" fill="none" stroke="#f0c979" stroke-width="2.2" stroke-linecap="round"><path d="M4 20L20 4"/></svg></div>
+              <div class="tool"><svg viewBox="0 0 24 24" fill="none" stroke="#8d897f" stroke-width="2.2" stroke-linecap="round"><path d="M4 20L20 4"/></svg></div>
+              <div class="tool opt-sm"><svg viewBox="0 0 24 24" fill="none" stroke="#8d897f" stroke-width="2.2" stroke-linecap="round"><path d="M4 20L20 4"/></svg></div>
+              <div class="tool opt-sm"><svg viewBox="0 0 24 24" fill="none" stroke="#8d897f" stroke-width="4" stroke-linecap="round" opacity=".7"><path d="M5 19L19 5"/></svg></div>
+              <div class="tsep"></div>
+              <div class="swatch" style="background:#f1ede3"></div>
+              <div class="swatch" style="background:#4a7cf0"></div>
+              <div class="swatch opt-sm" style="background:#e35d5b"></div>
+              <div class="swatch opt-sm" style="background:#3fb96b"></div>
+              <div class="swatch" style="background:#f0c979; box-shadow:0 0 0 2px #0d0f15, 0 0 0 3.5px #f0c979"></div>
+            </div>
+
+            <div class="world dots">
+              <!-- PDF pages -->
+              <div class="obj page o-pdf1" style="left:150px; top:170px; width:150px">
+                <div class="h"></div><div class="l" style="width:90%"></div><div class="l c" style="width:70%"></div><div class="l" style="width:84%"></div><div class="l t" style="width:60%"></div><div class="l" style="width:92%"></div><div class="l" style="width:76%"></div><div class="l c" style="width:50%"></div><div class="l" style="width:88%"></div><div class="l t" style="width:66%"></div><div class="l" style="width:80%"></div><div class="l" style="width:58%"></div>
+                <div class="hl" style="left:14px; top:52px; width:96px"></div>
+              </div>
+              <div class="obj page o-pdf2" style="left:314px; top:176px; width:150px">
+                <div class="h"></div><div class="l t" style="width:86%"></div><div class="l" style="width:72%"></div><div class="l" style="width:90%"></div><div class="l c" style="width:64%"></div><div class="l" style="width:82%"></div><div class="l" style="width:70%"></div><div class="l t" style="width:88%"></div><div class="l" style="width:62%"></div><div class="l" style="width:84%"></div><div class="l c" style="width:48%"></div><div class="l" style="width:76%"></div>
+              </div>
+              <div class="obj page hide-sm" style="left:150px; top:420px; width:150px">
+                <div class="h"></div><div class="l" style="width:80%"></div><div class="l t" style="width:66%"></div><div class="l" style="width:92%"></div><div class="l" style="width:58%"></div><div class="l c" style="width:74%"></div><div class="l" style="width:86%"></div><div class="l" style="width:68%"></div>
+              </div>
+
+              <!-- Video with ink over it -->
+              <div class="obj video o-video" style="left:510px; top:160px">
+                <div class="thumb"><div class="play"></div></div>
+                <div class="meta"><b>Video Overview · Rotator cuff</b><div class="bar"><i></i></div></div>
+              </div>
+              <svg class="obj ink o-ink" style="left:486px; top:130px; overflow:visible" width="380" height="330" viewBox="0 0 380 330" aria-hidden="true">
+                <path class="draw" pathLength="1" d="M300 70 C 350 40, 352 150, 290 175 C 230 200, 175 170, 190 120 C 205 75, 262 64, 300 70" stroke="#f0c979" stroke-width="3.2" style="animation-delay:.6s"/>
+                <path class="draw" pathLength="1" d="M58 312 C 130 304, 230 318, 330 303" stroke="#f0c979" stroke-width="3" style="animation-delay:5.4s"/>
+              </svg>
+              <div class="obj hand o-hand" style="left:540px; top:402px; animation-delay:2.8s">supraspinatus = abduction ✓</div>
+
+              <!-- Audio overview strip -->
+              <div class="obj audio o-audio" style="left:640px; top:520px">
+                <span class="aplay"></span>
+                <span class="wave"><i style="height:8px"></i><i style="height:16px"></i><i style="height:11px"></i><i style="height:20px"></i><i style="height:13px"></i><i style="height:22px"></i><i style="height:9px"></i><i style="height:17px"></i><i style="height:12px"></i><i style="height:19px"></i><i style="height:7px"></i><i style="height:15px"></i><i style="height:10px"></i><i style="height:18px"></i><i style="height:12px"></i><i style="height:8px"></i></span>
+                <span class="atext"><b>Audio overview</b>12:40 · Shoulder deep-dive</span>
+              </div>
+
+              <!-- Flashcard -->
+              <div class="obj flash hide-sm" style="left:880px; top:170px" tabindex="0" aria-label="Flashcard: which nerve supplies biceps brachii? Answer: the musculocutaneous nerve, C5 to C6">
+                <div class="flash-inner">
+                  <div class="face front"><small>Flashcard · 3 / 24</small><p>Which nerve supplies biceps brachii?</p><span class="hint">hover to flip</span></div>
+                  <div class="face back"><small>Answer</small><p>Musculocutaneous nerve<br>(C5–C6)</p><span class="hint">tap for next</span></div>
+                </div>
+              </div>
+
+              <!-- Quiz -->
+              <div class="obj quiz o-quiz" style="left:880px; top:330px">
+                <small>Quiz · Q4</small>
+                <p>Which muscle initiates the first 15° of abduction?</p>
+                <div class="opt">Deltoid</div>
+                <div class="opt ok">Supraspinatus <span>✓</span></div>
+              </div>
+
+              <!-- Mind map -->
+              <svg class="obj mind hide-sm" style="left:330px; top:440px" viewBox="0 0 260 150" aria-hidden="true">
+                <g stroke="rgba(212,162,76,.7)" stroke-width="1.6" fill="none">
+                  <path d="M92 75 C 120 75, 120 30, 150 30"/><path d="M92 75 L 150 75"/><path d="M92 75 C 120 75, 120 120, 150 120"/>
+                </g>
+                <rect x="6" y="60" width="86" height="30" rx="15" fill="#1c1f29" stroke="#d4a24c"/>
+                <text x="49" y="79" text-anchor="middle">Shoulder</text>
+                <rect x="150" y="16" width="104" height="28" rx="14" fill="#16302d" stroke="rgba(31,138,128,.9)"/><text x="202" y="34" text-anchor="middle">Rotator cuff</text>
+                <rect x="150" y="61" width="104" height="28" rx="14" fill="#16302d" stroke="rgba(31,138,128,.9)"/><text x="202" y="79" text-anchor="middle">Glenohumeral</text>
+                <rect x="150" y="106" width="104" height="28" rx="14" fill="#16302d" stroke="rgba(31,138,128,.9)"/><text x="202" y="124" text-anchor="middle">Scapula</text>
+              </svg>
+            </div>
+
+            <div class="minimap" aria-hidden="true">
+              <i style="left:10%;top:22%;width:12%;height:30%"></i><i style="left:24%;top:24%;width:12%;height:30%"></i>
+              <i style="left:44%;top:20%;width:22%;height:22%"></i><i style="left:72%;top:22%;width:16%;height:18%"></i>
+              <i style="left:72%;top:46%;width:18%;height:22%"></i><i style="left:28%;top:60%;width:20%;height:18%"></i>
+              <span class="view"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="strip">
+    <div class="wrap">
+      <span>Built for</span><b>Lecture PDFs</b><b>Word documents</b><b>NotebookLM</b><b>S Pen &amp; any stylus</b><b>Windows</b>
+    </div>
+  </div>
+
+  <!-- ================= FEATURES ================= -->
+  <section class="section" id="features">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="kicker">Everything on one page</div>
+        <h2>Stop juggling six apps<br>to revise <em>one</em> topic.</h2>
+        <p class="sub">A PDF viewer, a video player, a flashcard app, a quiz, a notebook. Infinite Notes puts them on the same canvas — and lets you write over all of it.</p>
+      </div>
+
+      <div class="bento">
+        <article class="tile wide reveal">
+          <h3>Writing that feels like paper</h3>
+          <p>Pen, pencil, fountain pen, marker and highlighter — pressure and tilt aware, with palm rejection so you can rest your hand. Study tape hides answers; a laser pointer helps you present.</p>
+          <div class="art pens" aria-hidden="true">
+            <div style="height:70px;--c:#f1ede3"></div><div style="height:88px;--c:#8d897f"></div><div style="height:104px;--c:#f0c979"></div><div style="height:82px;--c:#e35d5b"></div><div style="height:64px;--c:rgba(240,201,121,.6);width:22px"></div><div style="height:56px;--c:#1f8a80"></div>
+          </div>
+        </article>
+
+        <article class="tile wide reveal">
+          <h3>Every lecture, one page</h3>
+          <p>Import dozens of PDFs at once and they lay out in tidy rows. Drop in a Word document and it arrives as pages. Slides stay locked in place while you write over them, and two notes merge into one without covering a line.</p>
+          <div class="art chips"><span class="chip g">.pdf</span><span class="chip g">.docx</span><span class="chip">.png</span><span class="chip">.jpg</span><span class="chip">slide lock</span><span class="chip">merge notes</span><span class="chip">minimap</span><span class="chip">zoom to fit</span></div>
+        </article>
+
+        <article class="tile full reveal">
+          <h3>NotebookLM, alive on the canvas</h3>
+          <p>Nine kinds of study material, every one interactive — and every one you can write over. Videos play while your ink sits on top. Mind maps drag and fold. Flashcards flip. Quizzes mark your answer and show why.</p>
+          <div class="art chips">
+            <span class="chip g">Video overview</span><span class="chip g">Audio overview</span><span class="chip">Slide deck</span><span class="chip">Report</span><span class="chip">Infographic</span><span class="chip">Data table</span><span class="chip g">Mind map</span><span class="chip g">Flashcards</span><span class="chip g">Quiz</span>
+          </div>
+        </article>
+
+        <article class="tile reveal">
+          <h3>Handwriting → text</h3>
+          <p>Lasso your writing and turn it into typed text. On-device, offline after a one-time download.</p>
+          <div class="art convert" aria-hidden="true"><span class="from">brachial plexus</span><span class="arrow">→</span><span class="to">brachial plexus</span></div>
+        </article>
+
+        <article class="tile full reveal" id="desktop">
+          <h3>A desktop companion</h3>
+          <p>The Windows app opens the same notes on a big screen and syncs with your tablet over a USB cable, in whichever direction you choose — no Wi-Fi, no account, nothing leaves your two devices.</p>
+          <div class="art chips"><span class="chip g">USB sync</span><span class="chip">same notes, big screen</span><span class="chip">study mode</span><span class="chip">install with AI</span></div>
+        </article>
+
+        <article class="tile reveal">
+          <h3>Locked, if you want</h3>
+          <p>Put any note behind your fingerprint. Folders and colour tags keep a whole degree in order.</p>
+          <div class="art lockart" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" stroke="#f0c979" stroke-width="2.4" stroke-linecap="round"><rect x="10" y="21" width="28" height="21" rx="5"/><path d="M16 21v-6a8 8 0 0 1 16 0v6"/><circle cx="24" cy="31" r="2.6" fill="#f0c979" stroke="none"/></svg>
+            <ul><li>Biometric lock</li><li>Folders &amp; tags</li><li>One-file backup</li></ul>
+          </div>
+        </article>
+
+        <article class="tile all reveal">
+          <h3>Lecture capture <span style="font:500 13px var(--sans); color:var(--gold); vertical-align:6px; margin-left:6px">EARLY ACCESS</span></h3>
+          <p>Record a lecture on the tablet; a laptop with an NVIDIA graphics card transcribes it and writes structured revision notes back onto a page — headings, key terms and all. In early testing, and not in the public download yet. When it arrives: always get permission before recording a lecture.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= GALLERY ================= -->
+  <section aria-label="Screenshots">
+    <div class="wrap reveal center">
+      <div class="kicker">A calm place to think</div>
+      <h2>Noir and gold, <em>one</em> quiet toolbar.</h2>
+    </div>
+    <div class="gallery" tabindex="0" aria-label="Screenshot gallery, scroll sideways">
+      <figure><img src="assets/screen-1.webp" alt="Several lecture PDFs laid out in a row on the canvas" loading="lazy" width="1600" height="1000"><figcaption>Import every lecture PDF at once.</figcaption></figure>
+      <figure><img src="assets/screen-2.webp" alt="A page with highlighter, underline, circle and tick marks drawn over it" loading="lazy" width="1600" height="1000"><figcaption>Handwrite straight over your slides.</figcaption></figure>
+      <figure><img src="assets/screen-3.webp" alt="A grid of dozens of pages spread across the canvas" loading="lazy" width="1600" height="1000"><figcaption>Never run out of space.</figcaption></figure>    </div>
+  </section>
+
+  <!-- ================= HOW IT CONNECTS ================= -->
+  <section class="section">
+    <div class="wrap">
+      <div class="reveal center">
+        <div class="kicker">How it connects</div>
+        <h2>Two devices. <em>One</em> cable.</h2>
+        <p class="sub">No cloud in the middle. Your tablet and your laptop talk to each other directly, and nobody else is in the conversation.</p>
+      </div>
+      <div class="flow reveal">
+        <div class="node">
+          <svg viewBox="0 0 56 56" fill="none" stroke="#f0c979" stroke-width="2"><rect x="8" y="6" width="40" height="44" rx="6"/><path d="M20 44h16"/><path d="M16 30c6-8 10 4 16-4s8 2 10-2" stroke-linecap="round"/></svg>
+          <b>Your tablet</b><span>Write, import, study — fully offline.</span>
+        </div>
+        <div class="wire" aria-hidden="true"></div>
+        <div class="node">
+          <svg viewBox="0 0 56 56" fill="none" stroke="#f0c979" stroke-width="2" stroke-linecap="round"><path d="M28 6v14M20 20h16v10a8 8 0 0 1-16 0z"/><path d="M28 38v12"/><path d="M23 12v6M33 12v6"/></svg>
+          <b>A USB cable</b><span>The desktop app handles the link automatically.</span>
+        </div>
+        <div class="wire" aria-hidden="true"></div>
+        <div class="node">
+          <svg viewBox="0 0 56 56" fill="none" stroke="#f0c979" stroke-width="2" stroke-linejoin="round"><rect x="8" y="10" width="40" height="27" rx="3"/><path d="M4 44h48l-4-7H8z"/></svg>
+          <b>Your laptop</b><span>The same notes on a big screen.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PRIVACY ================= -->
+  <section class="privacy" id="privacy">
+    <div class="wrap reveal">
+      <div class="kicker">Privacy</div>
+      <h2>Your notes never touch our servers&nbsp;— <em>because there aren't any.</em></h2>
+      <div class="pgrid">
+        <div><b>No account</b><span>Open the app and write. There is nothing to sign up for.</span></div>
+        <div><b>No analytics, no ads</b><span>We collect nothing. The one outside party is Google's on-device handwriting recogniser, which reports anonymous performance metrics to Google — never your notes. <a href="https://github.com/Nobel-7-3/infinite-notes/blob/main/PRIVACY.md">Details</a></span></div>
+        <div><b>Yours to keep</b><span>Export every note to one backup file and take it wherever you like.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DOWNLOAD ================= -->
+  <section class="section" id="download">
+    <div class="wrap">
+      <div class="reveal center">
+        <div class="kicker">Get it</div>
+        <h2>Start writing in <em>two minutes.</em></h2>
+      </div>
+      <div class="dl">
+        <article class="card reveal">
+          <span class="os"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M10 18.5h4" stroke-linecap="round"/></svg>Android 10+ · tablet with a pen recommended</span>
+          <h3>Infinite Notes for Android</h3>
+          <p>The full app. Everything works offline.</p>
+          <a class="btn btn-gold" href="https://github.com/Nobel-7-3/infinite-notes/releases/latest/download/InfiniteNotes-Android.apk">Download the APK</a>
+          <ol>
+            <li>Open the downloaded file on your tablet.</li>
+            <li>Allow installs from that app when Android asks, then tap <b>Install</b>.</li>
+            <li>Updating later? Install over the top — your notes stay.</li>
+          </ol>
+        </article>
+        <article class="card reveal">
+          <span class="os"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="11.5" rx="1.5"/><path d="M1.5 19.5h21l-1.8-3.5H3.3z"/></svg>Windows 10 / 11</span>
+          <h3>Desktop companion</h3>
+          <p>Your notes on a big screen, synced over USB.</p>
+          <a class="btn btn-ghost" href="https://github.com/Nobel-7-3/infinite-notes/releases/latest/download/InfiniteNotes-Windows-Setup.exe">Download for Windows</a>
+          <ol>
+            <li>Run the installer. SmartScreen may warn — <b>More info → Run anyway</b>.</li>
+            <li>Open Infinite Notes from the Start menu.</li>
+            <li>Plug in your tablet and tap <b>Sync</b>.</li>
+          </ol>
+        </article>
+
+        <article class="card ai reveal">
+          <div>
+            <span class="os">✦ Or let your AI assistant do it</span>
+            <h3>Install with AI</h3>
+            <p style="margin:0">Paste this into your coding assistant. It checks the download is genuine, asks before installing anything, and never touches your notes.</p>
+            <div class="agents"><span class="chip">Claude Code</span><span class="chip">Antigravity</span><span class="chip">Codex</span><span class="chip">Cursor</span><span class="chip">Copilot</span></div>
+          </div>
+          <div class="prompt" id="prompt">Read https://github.com/Nobel-7-3/infinite-notes/blob/main/AGENTS.md and install Infinite Notes for Windows on this computer for me. Tell me what you will download before you download it, check it against the published SHA-256 checksum, then install it and open the app.<button class="btn btn-ghost btn-sm copy" type="button" data-copy="prompt">Copy</button></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOUNDER ================= -->
+  <section class="founder" id="story">
+    <div class="wrap">
+      <div class="box reveal">
+        <div class="mark" aria-hidden="true">“</div>
+        <div>
+          <blockquote>I was revising from six apps at once — PDFs in one, videos in another, flashcards somewhere else. So I built the notebook I wanted: one page, no edges, and everything I'm learning on it.</blockquote>
+          <cite><b>Sai</b> — founder, Infinite Notes</cite>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Sai. All rights reserved.</span>
+    <nav aria-label="Footer">
+      <a href="https://github.com/Nobel-7-3/infinite-notes/releases">All releases</a>
+      <a href="https://github.com/Nobel-7-3/infinite-notes/blob/main/PRIVACY.md">Privacy</a>
+      <a href="https://github.com/Nobel-7-3/infinite-notes/blob/main/LICENSE">Licence</a>
+      <a href="https://github.com/Nobel-7-3/infinite-notes/blob/main/THIRD_PARTY_NOTICES.md">Open-source notices</a>
+      <a href="https://github.com/Nobel-7-3/infinite-notes/blob/main/SECURITY.md">Security</a>
+    </nav>
+    <p class="tm">Android is a trademark of Google LLC. NotebookLM is a trademark of Google LLC. Windows is a trademark of the Microsoft group of companies. Samsung, Galaxy and S Pen are trademarks of Samsung Electronics Co., Ltd. Infinite Notes is an independent project and is not affiliated with, endorsed by or sponsored by any of them.</p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var y = document.getElementById("year");
+    if (y) y.textContent = String(new Date().getFullYear());
+
+    document.querySelectorAll("[data-copy]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var src = document.getElementById(btn.getAttribute("data-copy"));
+        var text = src ? src.childNodes[0].textContent.trim() : "";
+        var done = function () { btn.textContent = "Copied ✓"; setTimeout(function () { btn.textContent = "Copy"; }, 1800); };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, function () { btn.textContent = "Select & copy"; });
+        } else {
+          btn.textContent = "Select & copy";
+        }
+      });
+    });
+
+    var items = document.querySelectorAll(".reveal");
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+      }, { rootMargin: "0px 0px -8% 0px" });
+      items.forEach(function (el) { io.observe(el); });
+    } else {
+      items.forEach(function (el) { el.classList.add("in"); });
+    }
+
+    var stage = document.querySelector(".stage");
+    var world = document.querySelector(".world");
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (stage && world && !reduce && window.matchMedia("(pointer: fine)").matches) {
+      stage.addEventListener("pointermove", function (e) {
+        var r = stage.getBoundingClientRect();
+        var dx = (e.clientX - r.left) / r.width - 0.5;
+        var dy = (e.clientY - r.top) / r.height - 0.5;
+        world.style.translate = (dx * -18).toFixed(1) + "px " + (dy * -12).toFixed(1) + "px";
+      });
+      stage.addEventListener("pointerleave", function () { world.style.translate = "0 0"; });
+    }
+  })();
+</script>
+</body>
+</html>

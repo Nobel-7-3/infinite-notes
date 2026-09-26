@@ -1,0 +1,26 @@
+# Builds live in GitHub Releases, never in git.
+*.apk
+*.aab
+*.exe
+*.msi
+*.zip
+dist/
+
+# Secrets and personal files, defensively.
+.env
+.env.*
+*.jks
+*.keystore
+*.p12
+*.pem
+keystore.properties
+oauth-credentials.json
+drive-token.json
+
+# Local captures that can show real notes.
+tablet_*.png
+screenshot*.png
+ui*.xml
+
+.DS_Store
+Thumbs.db

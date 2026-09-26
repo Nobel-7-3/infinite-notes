@@ -1,0 +1,48 @@
+name: Something isn't working
+description: Tell us what went wrong.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for trying Infinite Notes.
+        **Please don't attach real notes, or screenshots that show personal information** — issues are public.
+        Security problem? Don't file it here: use **Report a vulnerability** on the Security tab.
+  - type: dropdown
+    id: app
+    attributes:
+      label: Which app?
+      options:
+        - Android
+        - Windows
+        - Both / syncing between them
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: And what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How can we make it happen again?
+      placeholder: |
+        1. Open a note
+        2. Import a PDF
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: Android — Settings → Apps → Infinite Notes. Windows — the installer's file name or Settings → Apps.
+      placeholder: "4.7 / 3.8.1"
+  - type: input
+    id: device
+    attributes:
+      label: Device and system version
+      placeholder: "Galaxy Tab, Android 15 / Windows 11"

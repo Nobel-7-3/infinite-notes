@@ -1,0 +1,15 @@
+name: I have an idea
+description: Suggest something that would make Infinite Notes better for you.
+labels: [idea]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The situation, not the solution — e.g. "revising for an exam from 40 lecture PDFs".
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help?
