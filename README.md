@@ -13,7 +13,7 @@ quizzes and mind maps living on the same page as your handwriting.
 ![Works offline](https://img.shields.io/badge/works-offline-0b0c10?style=flat-square&color=1f7a73)
 ![Free](https://img.shields.io/badge/price-free-0b0c10?style=flat-square&color=d4a24c)
 
-[**Download**](#download) · [What it does](#what-it-does) · [Privacy](#privacy) · [Install guides](#install-guides) · [Report a bug](https://github.com/Nobel-7-3/infinite-notes/issues/new/choose)
+[**Download**](#download) · [Watch](#see-it-in-30-seconds) · [What it does](#what-it-does) · [Privacy](#privacy) · [Install guides](#install-guides) · [Report a bug](https://github.com/Nobel-7-3/infinite-notes/issues/new/choose)
 
 <br>
 
@@ -37,6 +37,16 @@ download is exactly the file published here. Older versions and release notes:
 
 The tablet app works entirely on its own. The Windows app is optional — it shows
 the same notes on a big screen and syncs with the tablet over a USB cable.
+
+## See it in 30 seconds
+
+<div align="center">
+
+<a href="https://nobel-7-3.github.io/infinite-notes/#watch"><img src="site/assets/promo-readme.webp" width="280" alt="Play the 31-second tour of Infinite Notes"></a>
+
+<sub>Tap to play the tour on the website. It has no sound, so it's fine to watch anywhere.</sub>
+
+</div>
 
 ## What it does
 

@@ -209,6 +209,8 @@
 
   /* ---------- sections ---------- */
   section { position: relative; }
+  /* Keep anchored sections clear of the sticky nav. */
+  section[id], article[id] { scroll-margin-top: 64px; }
   .section { padding: 120px 0; }
   .kicker { font-size: 12.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); font-weight: 600; }
   h2 { font: 400 clamp(38px, 5.4vw, 64px)/1.02 var(--serif); letter-spacing: -0.02em; margin: 14px 0 18px; }
@@ -254,6 +256,20 @@
   .gallery figure { margin: 0; scroll-snap-align: start; }
   .gallery img { border-radius: 14px; border: 1px solid var(--hair); box-shadow: 0 30px 60px -30px rgba(0,0,0,.9); aspect-ratio: 16/10; object-fit: cover; width: 100%; height: auto; }
   .gallery figcaption { margin-top: 12px; font-size: 14px; color: var(--muted); }
+
+  .watch { padding: 40px 0 120px; }
+  .watch .wrap { display: grid; grid-template-columns: 1fr auto; gap: 72px; align-items: center; max-width: 980px; }
+  .watch .cta-row { justify-content: flex-start; margin-top: 30px; }
+  .points { list-style: none; margin: 26px 0 0; padding: 0; color: var(--muted); font-size: 16px; }
+  .points li { margin: 8px 0; }
+  .points li::before { content: "✦"; color: var(--gold); margin-right: 10px; font-size: 11px; vertical-align: 1px; }
+  .phone {
+    position: relative; width: 320px; padding: 10px; border-radius: 40px;
+    background: linear-gradient(160deg, #23252e, #0c0d12 55%);
+    border: 1px solid var(--hair-strong);
+    box-shadow: 0 60px 120px -40px rgba(0,0,0,.9), 0 0 0 1px rgba(0,0,0,.6), 0 30px 80px -50px rgba(212,162,76,.35);
+  }
+  .phone video { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; border-radius: 30px; background: var(--ink-1); }
 
   .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; gap: 18px; margin-top: 60px; }
   .flow .wire { align-self: center; }
@@ -314,6 +330,12 @@
     .wire { width: 2px; height: 36px; margin: 0 auto; background: repeating-linear-gradient(180deg, var(--gold) 0 8px, transparent 8px 14px); background-size: 2px 28px; animation-name: flowv; }
     @keyframes flowv { to { background-position: 0 28px; } }
     .pgrid, .dl, .ai { grid-template-columns: 1fr; }
+    .watch .wrap { grid-template-columns: 1fr; gap: 44px; text-align: center; }
+    .watch .cta-row { justify-content: center; }
+    .watch .sub { margin-inline: auto; }
+    .points { display: inline-block; text-align: left; }
+    .phone { width: min(300px, 80vw); margin-inline: auto; border-radius: 34px; }
+    .phone video { border-radius: 25px; }
     .founder .box { grid-template-columns: 1fr; padding: 30px; gap: 12px; }
     .founder .mark { font-size: 80px; }
   }
@@ -350,6 +372,7 @@
     <a class="brand" href="#top"><img src="assets/icon-192.png" alt="">Infinite Notes</a>
     <nav class="nav-links" aria-label="Sections">
       <a href="#features">Features</a>
+      <a href="#watch">Watch</a>
       <a href="#desktop">Desktop</a>
       <a href="#privacy">Privacy</a>
       <a href="#story">Story</a>
@@ -534,6 +557,28 @@
     </div>
   </section>
 
+  <!-- ================= WATCH ================= -->
+  <section class="watch" id="watch">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="kicker">Thirty seconds</div>
+        <h2>See it <em>move.</em></h2>
+        <p class="sub">From six apps to one page: bring in your lectures, write straight over them, study from the same canvas — then zoom out and see the whole course at once.</p>
+        <ul class="points">
+          <li>Every lecture PDF, imported at once</li>
+          <li>Ink over slides, videos and quizzes</li>
+          <li>One page that never runs out</li>
+        </ul>
+        <div class="cta-row">
+          <a class="btn btn-gold" href="#download">Download free</a>
+        </div>
+      </div>
+      <div class="phone reveal">
+        <video id="promo" src="assets/promo.mp4" poster="assets/promo-poster.webp" width="720" height="1280" muted loop playsinline preload="none" controls aria-label="A 31-second tour of Infinite Notes, without sound"></video>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= GALLERY ================= -->
   <section aria-label="Screenshots">
     <div class="wrap reveal center">
@@ -697,6 +742,25 @@
         world.style.translate = (dx * -18).toFixed(1) + "px " + (dy * -12).toFixed(1) + "px";
       });
       stage.addEventListener("pointerleave", function () { world.style.translate = "0 0"; });
+    }
+
+    // The tour plays, muted, while it is on screen, and stops when you scroll past or pause it.
+    var promo = document.getElementById("promo");
+    if (promo && !reduce && "IntersectionObserver" in window) {
+      var userPaused = false, ours = false;
+      promo.addEventListener("pause", function () { if (!ours) userPaused = true; ours = false; });
+      promo.addEventListener("play", function () { userPaused = false; });
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting && !userPaused) {
+            var p = promo.play();
+            if (p && p.catch) p.catch(function () {});
+          } else if (!e.isIntersecting && !promo.paused) {
+            ours = true;
+            promo.pause();
+          }
+        });
+      }, { threshold: 0.5 }).observe(promo);
     }
   })();
 </script>
